@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Windows Troubleshooting App</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -102,7 +103,7 @@
 
 <body>
     <h1>Windows Troubleshooting</h1>
-    <h2>By INDOJAVA x hinzdc</h2>
+    <p>by Indojava x hinzdc</p>
     <div class="container">
         <label for="problemInput">Jelaskan Masalah Anda:</label>
         <input type="text" id="problemInput" placeholder="Contoh: 'Komputer lambat setelah update'">
@@ -135,7 +136,9 @@
                 try {
                     const solution = await getGeminiSolution(problem, apiKey);
                     const formattedSolution = formatSolution(solution); // Format the solution
-                    solutionText.innerHTML = formattedSolution; // Set innerHTML directly
+                    solutionText.innerHTML = ''; // Clear the text
+                    wordTypeWriter(solutionText, formattedSolution); // Start word typing animation
+
                 } catch (error) {
                     console.error('Error:', error);
                     solutionText.textContent = 'Terjadi kesalahan saat mencari solusi.';
@@ -185,14 +188,18 @@
                 return formattedSolution;
             }
 
-            // Fungsi untuk efek typing
-            function typeWriter(element, text, i = 0) {
-                if (i < text.length) {
-                    element.innerHTML += text.charAt(i); //Use innerHTML to render HTML Tags
-                    setTimeout(() => typeWriter(element, text, i + 1), 20); // Kecepatan typing
+
+            // Function for word typing effect
+            function wordTypeWriter(element, text, i = 0) {
+                const words = text.split(' ');
+                if (i < words.length) {
+                    element.innerHTML += words[i] + ' ';
+                    setTimeout(() => wordTypeWriter(element, text, i + 1), 50); // Adjust speed as needed
                 }
             }
+
         });
     </script>
 </body>
+
 </html>
