@@ -186,7 +186,12 @@
             }
 
             // Fungsi untuk efek typing
-            // Removed typeWriter function
+            function typeWriter(element, text, i = 0) {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i); //Use innerHTML to render HTML Tags
+                    setTimeout(() => typeWriter(element, text, i + 1), 20); // Kecepatan typing
+                }
+            }
         });
     </script>
 </body>
