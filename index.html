@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Windows Troubleshooting Assistant</title>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+        #container {
+            width: 80%;
+            margin: 0 auto;
+        }
+        #problemInput {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        #searchButton {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #solution {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            white-space: pre-wrap; /* Agar line breaks dipertahankan */
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>Windows Troubleshooting Assistant</h1>
+        <input type="text" id="problemInput" placeholder="Describe your problem">
+        <button id="searchButton">Search Solution</button>
+        <div id="solution"></div>
+    </div>
+
+    <script>
+        const apiKey = "AIzaSyALk6etfnjOHYBLqwRVhi-Md3ASiGBKMYQ"; // **GANTI DENGAN API KEY ANDA!**
+        const problemInput = document.getElementById("problemInput");
+        const searchButton = document.getElementById("searchButton");
+        const solutionDiv = document.getElementById("solution");
+
+        searchButton.addEventListener("click", async () => {
+            const problem = problemInput.value;
+            if (problem) {
+                solutionDiv.textContent = "Searching for solution...";
+                try {
+                    const solutionText = await getGeminiSolution(problem);
+                    solutionDiv.textContent = ""; // Bersihkan teks "Searching..."
+
+                    // Efek Typing
+                    typeWriter(solutionText, 0);
+                } catch (error) {
+                    console.error("Error:", error);
+                    solutionDiv.textContent = "An error occurred while fetching the solution.";
+                }
+            } else {
+                solutionDiv.textContent = "Please enter your problem.";
+            }
+        });
+
+        async function getGeminiSolution(problem) {
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
+
+            const promptText = `Anda adalah seorang ahli troubleshooting sistem operasi Windows.
+            Berikan solusi langkah demi langkah yang jelas dan ringkas untuk masalah Windows berikut ini:
+
+            ${problem}
+
+            Pastikan solusinya mudah diikuti oleh pengguna awam.`;
+
+            const data = {
+                contents: [{
+                    parts: [{ text: promptText }]
+                }]
+            };
+
+            const response = await fetch(apiUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const json = await response.json();
+
+            // Pastikan respons berisi teks solusi.  Sesuaikan ini berdasarkan format respons API Gemini.
+            if (json.candidates && json.candidates[0] && json.candidates[0].content && json.candidates[0].content.parts && json.candidates[0].content.parts[0].text) {
+                return json.candidates[0].content.parts[0].text;
+            } else {
+                throw new Error("Invalid response format from Gemini API.");
+            }
+        }
+
+        function typeWriter(text, i) {
+            if (i < text.length) {
+                solutionDiv.textContent += text.charAt(i);
+                setTimeout(() => typeWriter(text, i + 1), 20); // Ubah angka 20 untuk kecepatan typing
+            }
+        }
+    </script>
+</body>
+</html>
