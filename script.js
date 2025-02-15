@@ -1,0 +1,1 @@
+const apiKey = "AIzaSyALk6etfnjOHYBLqwRVhi-Md3ASiGBKMYQ";
