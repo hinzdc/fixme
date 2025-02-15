@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Windows Troubleshooting App</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Penting untuk responsivitas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
             font-family: sans-serif;
@@ -11,9 +11,9 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 100vh; /* Menggunakan min-height agar konten tidak terpotong di layar kecil */
+            min-height: 100vh;
             margin: 0;
-            padding: 20px; /* Tambahkan padding untuk ruang di sekitar konten di layar kecil */
+            padding: 20px;
         }
 
         .container {
@@ -21,15 +21,16 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 100%; /* Lebar 100% untuk layar kecil */
-            max-width: 600px; /* Lebar maksimum untuk desktop */
+            width: 100%;
+            max-width: 600px;
             text-align: center;
         }
 
         label {
             display: block;
             margin-bottom: 5px;
-            font-weight: bold; /* Gaya bold menggunakan CSS */
+            font-weight: bold;
+            /* Gaya bold menggunakan CSS */
         }
 
         input[type="text"] {
@@ -61,7 +62,8 @@
         }
 
         #solutionText {
-            white-space: pre-line; /* Penting untuk mempertahankan format teks dari API */
+            white-space: pre-line;
+            /* Penting untuk mempertahankan format teks dari API */
         }
 
         bold {
@@ -71,11 +73,11 @@
         /* Media query untuk layar yang lebih besar dari 768px (desktop) */
         @media (min-width: 768px) {
             body {
-                padding: 0; /* Hapus padding di layar yang lebih besar */
+                padding: 0;
             }
 
             .container {
-                width: 80%; /* Kembalikan lebar ke 80% untuk desktop */
+                width: 80%;
             }
         }
 
@@ -89,15 +91,18 @@
                 font-size: 0.9em;
             }
 
-            input[type="text"], button {
+            input[type="text"],
+            button {
                 font-size: 0.8em;
                 padding: 8px;
             }
         }
     </style>
 </head>
+
 <body>
     <h1>Windows Troubleshooting</h1>
+    <h2>By INDOJAVA x hinzdc</h2>
     <div class="container">
         <label for="problemInput">Jelaskan Masalah Anda:</label>
         <input type="text" id="problemInput" placeholder="Contoh: 'Komputer lambat setelah update'">
@@ -130,8 +135,7 @@
                 try {
                     const solution = await getGeminiSolution(problem, apiKey);
                     const formattedSolution = formatSolution(solution); // Format the solution
-                    solutionText.textContent = ''; // Bersihkan teks "Loading..."
-                    typeWriter(solutionText, formattedSolution); // Mulai animasi typing
+                    solutionText.innerHTML = formattedSolution; // Set innerHTML directly
                 } catch (error) {
                     console.error('Error:', error);
                     solutionText.textContent = 'Terjadi kesalahan saat mencari solusi.';
@@ -143,7 +147,9 @@
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
                 const data = {
                     contents: [{
-                        parts: [{ text: `Berikan solusi troubleshooting untuk masalah Windows berikut: ${problem}. Berikan langkah-langkah yang jelas dan mudah diikuti.  Jangan gunakan format markdown. Jika ingin menebalkan kata gunakan tag html <bold>tebal</bold>. Untuk membuat list gunakan html list ordered dan unordered. contoh <ol><li>list 1</li><li>list 2</li></ol> ` }]
+                        parts: [{
+                            text: `Berikan solusi troubleshooting untuk masalah Windows berikut: ${problem}. Berikan langkah-langkah yang jelas dan mudah diikuti.  Jangan gunakan format markdown. Jika ingin menebalkan kata gunakan tag html <bold>tebal</bold>. Untuk membuat list gunakan html list ordered dan unordered. contoh <ol><li>list 1</li><li>list 2</li></ol> `
+                        }]
                     }]
                 };
 
@@ -170,7 +176,7 @@
                 // Replace **bold text** with <bold>bold text</bold>
                 let formattedSolution = solution.replace(/\*\*(.*?)\*\*/g, '<bold>$1</bold>');
 
-                 // Replace *italic text* with <em>italic text</em>
+                // Replace *italic text* with <em>italic text</em>
                 formattedSolution = formattedSolution.replace(/\*(.*?)\*/g, '<em>$1</em>');
 
                 //Convert newlines to <br>
@@ -180,12 +186,7 @@
             }
 
             // Fungsi untuk efek typing
-            function typeWriter(element, text, i = 0) {
-                if (i < text.length) {
-                    element.innerHTML += text.charAt(i); //Use innerHTML to render HTML Tags
-                    setTimeout(() => typeWriter(element, text, i + 1), 20); // Kecepatan typing
-                }
-            }
+            // Removed typeWriter function
         });
     </script>
 </body>
