@@ -11,10 +11,10 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: top;
             min-height: 100vh;
             margin: 0;
-            padding: 20px;
+            padding: 0px 20px 0px 20px;
         }
 
         .container {
@@ -98,12 +98,19 @@
                 padding: 8px;
             }
         }
+
+        /* Style untuk menyembunyikan span sampai diaktifkan*/
+        .hidden-letter {
+            opacity: 0;
+            transition: opacity 0.1s ease-in-out;
+            /* Sesuaikan kecepatan sesuai kebutuhan */
+        }
     </style>
 </head>
 
 <body>
     <h1>Windows Troubleshooting</h1>
-    <p>by Indojava x hinzdc</p>
+    <p>by INDOJAVA</p>
     <div class="container">
         <label for="problemInput">Jelaskan Masalah Anda:</label>
         <input type="text" id="problemInput" placeholder="Contoh: 'Komputer lambat setelah update'">
@@ -120,8 +127,8 @@
             const searchButton = document.getElementById('searchButton');
             const solutionText = document.getElementById('solutionText');
 
-            // API Key Anda (HANYA UNTUK DEMO!)
-            const apiKey = "AIzaSyALk6etfnjOHYBLqwRVhi-Md3ASiGBKMYQ"; // Ganti dengan API Key Anda
+            // API Key
+            const apiKey = "AIzaSyALk6etfnjOHYBLqwRVhi-Md3ASiGBKMYQ";
 
             searchButton.addEventListener('click', async () => {
                 const problem = problemInput.value;
@@ -136,8 +143,13 @@
                 try {
                     const solution = await getGeminiSolution(problem, apiKey);
                     const formattedSolution = formatSolution(solution); // Format the solution
-                    solutionText.innerHTML = ''; // Clear the text
-                    wordTypeWriter(solutionText, formattedSolution); // Start word typing animation
+                    //Convert the formatted solution into individual spans, handling HTML tags
+                    const spannedSolution = createSpannedText(formattedSolution);
+                    solutionText.innerHTML = spannedSolution;
+
+                    //Now trigger the typing animation
+                    typeSpannedText(solutionText);
+
 
                 } catch (error) {
                     console.error('Error:', error);
@@ -189,12 +201,39 @@
             }
 
 
-            // Function for word typing effect
-            function wordTypeWriter(element, text, i = 0) {
-                const words = text.split(' ');
-                if (i < words.length) {
-                    element.innerHTML += words[i] + ' ';
-                    setTimeout(() => wordTypeWriter(element, text, i + 1), 50); // Adjust speed as needed
+            function createSpannedText(text) {
+                let spannedText = '';
+                let tag = '';
+                let inTag = false;
+
+                for (let i = 0; i < text.length; i++) {
+                    if (text[i] === '<') {
+                        inTag = true;
+                        tag += text[i];
+                    } else if (text[i] === '>') {
+                        inTag = false;
+                        tag += text[i];
+                        spannedText += tag; // Add the whole tag at once
+                        tag = '';
+                    } else if (inTag) {
+                        tag += text[i];
+                    } else {
+                        spannedText += `<span class="hidden-letter">${text[i]}</span>`;
+                    }
+                }
+                return spannedText;
+            }
+
+
+
+            //Typing effect on the spanned text
+            function typeSpannedText(element, index = 0) {
+                const letters = element.querySelectorAll('.hidden-letter');
+                if (index < letters.length) {
+                    setTimeout(() => {
+                        letters[index].style.opacity = 1;
+                        typeSpannedText(element, index + 1);
+                    }, 5); // Adjust the timing here
                 }
             }
 
