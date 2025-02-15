@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Windows Troubleshooting App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Penting untuk responsivitas -->
     <style>
         body {
             font-family: sans-serif;
@@ -10,8 +11,9 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
+            min-height: 100vh; /* Menggunakan min-height agar konten tidak terpotong di layar kecil */
             margin: 0;
+            padding: 20px; /* Tambahkan padding untuk ruang di sekitar konten di layar kecil */
         }
 
         .container {
@@ -19,8 +21,8 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 80%;
-            max-width: 600px;
+            width: 100%; /* Lebar 100% untuk layar kecil */
+            max-width: 600px; /* Lebar maksimum untuk desktop */
             text-align: center;
         }
 
@@ -61,6 +63,37 @@
         #solutionText {
             white-space: pre-line; /* Penting untuk mempertahankan format teks dari API */
         }
+
+        bold {
+            font-weight: bold;
+        }
+
+        /* Media query untuk layar yang lebih besar dari 768px (desktop) */
+        @media (min-width: 768px) {
+            body {
+                padding: 0; /* Hapus padding di layar yang lebih besar */
+            }
+
+            .container {
+                width: 80%; /* Kembalikan lebar ke 80% untuk desktop */
+            }
+        }
+
+        /*Media query untuk layar yang sangat kecil (misalnya, jam tangan pintar)*/
+        @media (max-width: 320px) {
+            h1 {
+                font-size: 1.5em;
+            }
+
+            label {
+                font-size: 0.9em;
+            }
+
+            input[type="text"], button {
+                font-size: 0.8em;
+                padding: 8px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -96,8 +129,9 @@
 
                 try {
                     const solution = await getGeminiSolution(problem, apiKey);
+                    const formattedSolution = formatSolution(solution); // Format the solution
                     solutionText.textContent = ''; // Bersihkan teks "Loading..."
-                    typeWriter(solutionText, solution); // Mulai animasi typing
+                    typeWriter(solutionText, formattedSolution); // Mulai animasi typing
                 } catch (error) {
                     console.error('Error:', error);
                     solutionText.textContent = 'Terjadi kesalahan saat mencari solusi.';
@@ -109,7 +143,7 @@
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
                 const data = {
                     contents: [{
-                        parts: [{ text: `Berikan solusi troubleshooting untuk masalah Windows berikut: ${problem}. Berikan langkah-langkah yang jelas dan mudah diikuti. Gunakan format markdown jika perlu untuk heading, list dan lain-lain.` }]
+                        parts: [{ text: `Berikan solusi troubleshooting untuk masalah Windows berikut: ${problem}. Berikan langkah-langkah yang jelas dan mudah diikuti.  Jangan gunakan format markdown. Jika ingin menebalkan kata gunakan tag html <bold>tebal</bold>. Untuk membuat list gunakan html list ordered dan unordered. contoh <ol><li>list 1</li><li>list 2</li></ol> ` }]
                     }]
                 };
 
@@ -131,10 +165,24 @@
                 return solution;
             }
 
+            // Fungsi untuk memformat solusi
+            function formatSolution(solution) {
+                // Replace **bold text** with <bold>bold text</bold>
+                let formattedSolution = solution.replace(/\*\*(.*?)\*\*/g, '<bold>$1</bold>');
+
+                 // Replace *italic text* with <em>italic text</em>
+                formattedSolution = formattedSolution.replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+                //Convert newlines to <br>
+                formattedSolution = formattedSolution.replace(/\n/g, '<br>');
+
+                return formattedSolution;
+            }
+
             // Fungsi untuk efek typing
             function typeWriter(element, text, i = 0) {
                 if (i < text.length) {
-                    element.textContent += text.charAt(i);
+                    element.innerHTML += text.charAt(i); //Use innerHTML to render HTML Tags
                     setTimeout(() => typeWriter(element, text, i + 1), 20); // Kecepatan typing
                 }
             }
