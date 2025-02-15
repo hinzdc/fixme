@@ -2,7 +2,66 @@
 <html>
 <head>
     <title>Windows Troubleshooting App</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold; /* Gaya bold menggunakan CSS */
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #3e8e41;
+        }
+
+        #solutionContainer {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        #solutionText {
+            white-space: pre-line; /* Penting untuk mempertahankan format teks dari API */
+        }
+    </style>
 </head>
 <body>
     <h1>Windows Troubleshooting</h1>
@@ -16,6 +75,70 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const problemInput = document.getElementById('problemInput');
+            const searchButton = document.getElementById('searchButton');
+            const solutionText = document.getElementById('solutionText');
+
+            // API Key Anda (HANYA UNTUK DEMO!)
+            const apiKey = "AIzaSyALk6etfnjOHYBLqwRVhi-Md3ASiGBKMYQ"; // Ganti dengan API Key Anda
+
+            searchButton.addEventListener('click', async () => {
+                const problem = problemInput.value;
+
+                if (problem.trim() === '') {
+                    alert('Mohon masukkan deskripsi masalah.');
+                    return;
+                }
+
+                solutionText.textContent = 'Sedang mencari solusi...';
+
+                try {
+                    const solution = await getGeminiSolution(problem, apiKey);
+                    solutionText.textContent = ''; // Bersihkan teks "Loading..."
+                    typeWriter(solutionText, solution); // Mulai animasi typing
+                } catch (error) {
+                    console.error('Error:', error);
+                    solutionText.textContent = 'Terjadi kesalahan saat mencari solusi.';
+                }
+            });
+
+            // Fungsi untuk mendapatkan solusi dari Gemini API
+            async function getGeminiSolution(problem, apiKey) {
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
+                const data = {
+                    contents: [{
+                        parts: [{ text: `Berikan solusi troubleshooting untuk masalah Windows berikut: ${problem}. Berikan langkah-langkah yang jelas dan mudah diikuti. Gunakan format markdown jika perlu untuk heading, list dan lain-lain.` }]
+                    }]
+                };
+
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const responseData = await response.json();
+                console.log(responseData);
+                const solution = responseData.candidates[0].content.parts[0].text;
+                return solution;
+            }
+
+            // Fungsi untuk efek typing
+            function typeWriter(element, text, i = 0) {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    setTimeout(() => typeWriter(element, text, i + 1), 20); // Kecepatan typing
+                }
+            }
+        });
+    </script>
 </body>
 </html>
