@@ -159,7 +159,7 @@
 
             // Fungsi untuk mendapatkan solusi dari Gemini API
             async function getGeminiSolution(problem, apiKey) {
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
                 const data = {
                     contents: [{
                         parts: [{
