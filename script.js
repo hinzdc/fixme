@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const solutionText = document.getElementById('solutionText');
 
     // API Key Anda (HANYA UNTUK DEMO!)
-    const apiKey = "AIzaSyALk6etfnjOHYBLqwRVhi-Md3ASiGBKMYQ";
+    const apiKey = "AIzaSyD69ePjrEltfUKrTL7XcbAs0xtq1t_q1FU";
 
     searchButton.addEventListener('click', async () => {
         const problem = problemInput.value;
