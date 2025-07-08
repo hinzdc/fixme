@@ -1,244 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 
 <head>
+    <meta charset="UTF-8">
     <title>Windows Troubleshooting App</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body {
-            font-family: sans-serif;
-            background-color: #f0f0f0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: top;
-            min-height: 100vh;
-            margin: 0;
-            padding: 0px 20px 0px 20px;
-        }
-
-        .container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 600px;
-            text-align: center;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            /* Gaya bold menggunakan CSS */
-        }
-
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        button:hover {
-            background-color: #3e8e41;
-        }
-
-        #solutionContainer {
-            margin-top: 20px;
-            text-align: left;
-        }
-
-        #solutionText {
-            white-space: pre-line;
-            /* Penting untuk mempertahankan format teks dari API */
-        }
-
-        bold {
-            font-weight: bold;
-        }
-
-        /* Media query untuk layar yang lebih besar dari 768px (desktop) */
-        @media (min-width: 768px) {
-            body {
-                padding: 0;
-            }
-
-            .container {
-                width: 80%;
-            }
-        }
-
-        /*Media query untuk layar yang sangat kecil (misalnya, jam tangan pintar)*/
-        @media (max-width: 320px) {
-            h1 {
-                font-size: 1.5em;
-            }
-
-            label {
-                font-size: 0.9em;
-            }
-
-            input[type="text"],
-            button {
-                font-size: 0.8em;
-                padding: 8px;
-            }
-        }
-
-        /* Style untuk menyembunyikan span sampai diaktifkan*/
-        .hidden-letter {
-            opacity: 0;
-            transition: opacity 0.1s ease-in-out;
-            /* Sesuaikan kecepatan sesuai kebutuhan */
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <h1>Windows Troubleshooting</h1>
-    <p>by INDOJAVA</p>
+    <p class="subtitle">by INDOJAVA</p>
     <div class="container">
         <label for="problemInput">Jelaskan Masalah Anda:</label>
         <input type="text" id="problemInput" placeholder="Contoh: 'Komputer lambat setelah update'">
         <button id="searchButton">Cari Solusi</button>
-        <div id="solutionContainer">
+        <div id="loader" class="hidden"></div>
+        <div id="solutionContainer" class="hidden">
             <h2>Solusi:</h2>
             <p id="solutionText"></p>
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const problemInput = document.getElementById('problemInput');
-            const searchButton = document.getElementById('searchButton');
-            const solutionText = document.getElementById('solutionText');
-
-            // API Key
-            const apiKey = "AIzaSyD69ePjrEltfUKrTL7XcbAs0xtq1t_q1FU";
-
-            searchButton.addEventListener('click', async () => {
-                const problem = problemInput.value;
-
-                if (problem.trim() === '') {
-                    alert('Mohon masukkan deskripsi masalah.');
-                    return;
-                }
-
-                solutionText.textContent = 'Sedang mencari solusi...';
-
-                try {
-                    const solution = await getGeminiSolution(problem, apiKey);
-                    const formattedSolution = formatSolution(solution); // Format the solution
-                    //Convert the formatted solution into individual spans, handling HTML tags
-                    const spannedSolution = createSpannedText(formattedSolution);
-                    solutionText.innerHTML = spannedSolution;
-
-                    //Now trigger the typing animation
-                    typeSpannedText(solutionText);
-
-
-                } catch (error) {
-                    console.error('Error:', error);
-                    solutionText.textContent = 'Terjadi kesalahan saat mencari solusi.';
-                }
-            });
-
-            // Fungsi untuk mendapatkan solusi dari Gemini API
-            async function getGeminiSolution(problem, apiKey) {
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                const data = {
-                    contents: [{
-                        parts: [{
-                            text: `Berikan solusi troubleshooting untuk masalah Windows berikut: ${problem}. Berikan langkah-langkah yang jelas dan mudah diikuti.  Jangan gunakan format markdown. Jika ingin menebalkan kata gunakan tag html <bold>tebal</bold>. Untuk membuat list gunakan html list ordered dan unordered. contoh <ol><li>list 1</li><li>list 2</li></ol> `
-                        }]
-                    }]
-                };
-
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const responseData = await response.json();
-                console.log(responseData);
-                const solution = responseData.candidates[0].content.parts[0].text;
-                return solution;
-            }
-
-            // Fungsi untuk memformat solusi
-            function formatSolution(solution) {
-                // Replace **bold text** with <bold>bold text</bold>
-                let formattedSolution = solution.replace(/\*\*(.*?)\*\*/g, '<bold>$1</bold>');
-
-                // Replace *italic text* with <em>italic text</em>
-                formattedSolution = formattedSolution.replace(/\*(.*?)\*/g, '<em>$1</em>');
-
-                //Convert newlines to <br>
-                formattedSolution = formattedSolution.replace(/\n/g, '<br>');
-
-                return formattedSolution;
-            }
-
-
-            function createSpannedText(text) {
-                let spannedText = '';
-                let tag = '';
-                let inTag = false;
-
-                for (let i = 0; i < text.length; i++) {
-                    if (text[i] === '<') {
-                        inTag = true;
-                        tag += text[i];
-                    } else if (text[i] === '>') {
-                        inTag = false;
-                        tag += text[i];
-                        spannedText += tag; // Add the whole tag at once
-                        tag = '';
-                    } else if (inTag) {
-                        tag += text[i];
-                    } else {
-                        spannedText += `<span class="hidden-letter">${text[i]}</span>`;
-                    }
-                }
-                return spannedText;
-            }
-
-
-
-            //Typing effect on the spanned text
-            function typeSpannedText(element, index = 0) {
-                const letters = element.querySelectorAll('.hidden-letter');
-                if (index < letters.length) {
-                    setTimeout(() => {
-                        letters[index].style.opacity = 1;
-                        typeSpannedText(element, index + 1);
-                    }, 5); // Adjust the timing here
-                }
-            }
-
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 
 </html>

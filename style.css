@@ -1,58 +1,170 @@
+/* General Body Styles */
 body {
-    font-family: sans-serif;
-    background-color: #f0f0f0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0;
-}
-
-.container {
-    background-color: #fff;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 80%;
-    max-width: 600px;
-    text-align: center;
+    box-sizing: border-box;
 }
 
+/* Title and Subtitle */
+h1 {
+    color: #005a9e;
+    font-size: 2.5em;
+    margin-bottom: 0.2em;
+}
+
+.subtitle {
+    color: #666;
+    margin-top: 0;
+    margin-bottom: 30px;
+}
+
+/* Main Container */
+.container {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 700px;
+    text-align: center;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Form Elements */
 label {
     display: block;
-    margin-bottom: 5px;
-    font-weight: bold; /* Gaya bold menggunakan CSS */
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #333;
+    font-size: 1.1em;
 }
 
 input[type="text"] {
     width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
+    padding: 12px 15px;
+    margin-bottom: 20px;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 8px;
     box-sizing: border-box;
+    font-size: 1em;
+    transition: border-color 0.3s, box-shadow 0.3s;
 }
 
+input[type="text"]:focus {
+    border-color: #0078d4;
+    box-shadow: 0 0 5px rgba(0, 120, 212, 0.5);
+    outline: none;
+}
+
+/* Button Styles */
 button {
-    background-color: #4CAF50;
+    background-color: #0078d4;
     color: white;
-    padding: 12px 20px;
+    padding: 12px 25px;
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 1.1em;
+    font-weight: 600;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 button:hover {
-    background-color: #3e8e41;
+    background-color: #005a9e;
+    transform: translateY(-2px);
 }
 
+button:active {
+    background-color: #004578;
+    transform: translateY(0);
+}
+
+/* Loader/Spinner */
+#loader {
+    border: 5px solid #f3f3f3; 
+    border-top: 5px solid #0078d4;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 30px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Solution Area */
 #solutionContainer {
-    margin-top: 20px;
+    margin-top: 30px;
     text-align: left;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+#solutionContainer h2 {
+    color: #005a9e;
+    margin-top: 0;
 }
 
 #solutionText {
-    white-space: pre-line; /* Penting untuk mempertahankan format teks dari API */
+    white-space: pre-line;
+    line-height: 1.6;
+    color: #444;
+}
+
+.error-message {
+    color: #d9534f; /* A bootstrap-like danger color */
+    font-weight: bold;
+}
+
+
+/* Custom Bold Tag */
+bold, strong {
+    font-weight: 600;
+    color: #005a9e;
+}
+
+/* Utility Class */
+.hidden {
+    display: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2em;
+    }
+    .container {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+    h1 {
+        font-size: 1.8em;
+    }
+    .subtitle {
+        font-size: 0.9em;
+    }
+    button, input[type="text"] {
+        font-size: 1em;
+    }
 }
