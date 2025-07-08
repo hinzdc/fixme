@@ -148,23 +148,38 @@ bold, strong {
 @media (max-width: 768px) {
     h1 {
         font-size: 2em;
+        text-align: center;
+    }
+    .subtitle {
+        text-align: center;
     }
     .container {
         padding: 20px;
+        margin: 0 10px;
     }
 }
 
 @media (max-width: 480px) {
     body {
-        padding: 10px;
+        padding: 15px;
     }
     h1 {
         font-size: 1.8em;
     }
     .subtitle {
-        font-size: 0.9em;
+        font-size: 1em;
+    }
+    .container {
+        padding: 15px;
+    }
+    label {
+        font-size: 1em;
     }
     button, input[type="text"] {
         font-size: 1em;
+        padding: 12px;
+    }
+    #solutionText {
+        line-height: 1.5;
     }
 }
