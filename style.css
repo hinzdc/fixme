@@ -32,7 +32,7 @@ h1 {
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     width: 100%;
-    max-width: 700px;
+    max-width: 630px;
     text-align: center;
     transition: all 0.3s ease-in-out;
 }
@@ -148,38 +148,23 @@ bold, strong {
 @media (max-width: 768px) {
     h1 {
         font-size: 2em;
-        text-align: center;
-    }
-    .subtitle {
-        text-align: center;
     }
     .container {
         padding: 20px;
-        margin: 0 10px;
     }
 }
 
 @media (max-width: 480px) {
     body {
-        padding: 15px;
+        padding: 10px;
     }
     h1 {
         font-size: 1.8em;
     }
     .subtitle {
-        font-size: 1em;
-    }
-    .container {
-        padding: 15px;
-    }
-    label {
-        font-size: 1em;
+        font-size: 0.9em;
     }
     button, input[type="text"] {
         font-size: 1em;
-        padding: 12px;
-    }
-    #solutionText {
-        line-height: 1.5;
     }
 }

@@ -40,11 +40,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     async function getGeminiSolution(problem, apiKey) {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
         const data = {
             contents: [{
                 parts: [{
-                    text: `Berikan solusi troubleshooting untuk masalah Windows berikut: ${problem}. Berikan langkah-langkah yang jelas dan mudah diikuti. Jangan gunakan format markdown. Jika ingin menebalkan kata gunakan tag html <bold>tebal</bold>. Untuk membuat list gunakan html list ordered dan unordered. contoh <ol><li>list 1</li><li>list 2</li></ol> `
+                    text: `Berikan solusi troubleshooting untuk masalah Windows berikut: ${problem}. Berikan langkah-langkah yang jelas, mudah diikuti dan rinci. Jangan gunakan format markdown. Jika ingin menebalkan kata gunakan tag html <bold>tebal</bold>. Untuk membuat list gunakan html list ordered dan unordered. contoh <ol><li>list 1</li><li>list 2</li></ol> `
                 }]
             }]
         };
